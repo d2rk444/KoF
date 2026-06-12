@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- v10: Markov ordem-3 + Thompson Sampling + planilha + cenários + worker-clock -->
+<title>kof · auto</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+
+<div id="upload-screen">
+  <div>
+    <div class="title-main">KOF · MUGEN AI</div>
+    <div class="sub">KING OF FIGHTERS · ALL SPECIALS · ARCADE COMBO COUNTER</div>
+  </div>
+  <div class="fighters-row">
+    <div class="drop-zone" id="dz1" ondragover="dg(event,1)" ondragleave="dl(event,1)" ondrop="dp(event,1)" onclick="document.getElementById('fi1').click()">
+      <div class="dz-icon">🥊</div><div class="dz-player">FIGHTER 1</div>
+      <div class="dz-status" id="ds1">Clique ou arraste<br>o .zip do personagem</div>
+      <input type="file" id="fi1" accept=".zip" style="display:none" onchange="loadZip(1,this.files[0])">
+    </div>
+    <div class="vs-text">VS</div>
+    <div class="drop-zone" id="dz2" ondragover="dg(event,2)" ondragleave="dl(event,2)" ondrop="dp(event,2)" onclick="document.getElementById('fi2').click()">
+      <div class="dz-icon">🥋</div><div class="dz-player">FIGHTER 2</div>
+      <div class="dz-status" id="ds2">Clique ou arraste<br><span style="color:#444">(opcional)</span></div>
+      <input type="file" id="fi2" accept=".zip" style="display:none" onchange="loadZip(2,this.files[0])">
+    </div>
+  </div>
+  <div class="drop-zone" id="dzS" style="width:340px;height:96px"
+       ondragover="event.preventDefault();this.classList.add('drag-over')"
+       ondragleave="this.classList.remove('drag-over')"
+       ondrop="event.preventDefault();this.classList.remove('drag-over');loadStage(event.dataTransfer.files[0])"
+       onclick="document.getElementById('fiS').click()">
+    <div class="dz-icon" style="font-size:22px">🏟️</div>
+    <div class="dz-status" id="dsS">CENÁRIO (opcional): imagem ou .zip de imagens<br><span style="color:#444">arquivo "fundo" · troca a cada round</span></div>
+    <input type="file" id="fiS" accept="image/*,.zip" style="display:none" onchange="loadStage(this.files[0])">
+  </div>
+  <button class="fight-btn" id="fight-btn" onclick="startFight()">FIGHT!</button>
+  <p class="help-text">
+    MUGEN .sff v1/v2 · paleta .act · animações .air · imagens soltas (PNG/GIF)<br>
+    IA adaptativa por personagem · moveset auto-detectado · luta infinita<br>
+    KOF · SF · outros jogos suportados · hit counter arcade style
+  </p>
+  <div class="hotkeys-bar">
+    <div class="hk"><span class="hk-key">N</span><span class="hk-desc">nova dupla</span></div>
+    <div class="hk"><span class="hk-key">R</span><span class="hk-desc">reiniciar</span></div>
+    <div class="hk"><span class="hk-key">T</span><span class="hk-desc">turbo on/off</span></div>
+    <div class="hk"><span class="hk-key">+</span><span class="hk-key">-</span><span class="hk-desc">velocidade (ilimitado)</span></div>
+    <div class="hk"><span class="hk-key">D</span><span class="hk-desc">debug</span></div>
+    <div class="hk"><span class="hk-key">G</span><span class="hk-desc">log</span></div>
+    <div class="hk" onclick="exportMatchSheet()" style="cursor:pointer">
+      <span class="hk-key">X</span><span class="hk-desc">planilha da luta</span>
+    </div>
+    <div class="hk" onclick="toggleMute()" style="cursor:pointer">
+      <span class="hk-key" id="mute-ico">🔊</span><span class="hk-key">L</span><span class="hk-desc">mute</span>
+    </div>
+  </div>
+  <p style="font-size:7px;color:#333;margin-top:12px;letter-spacing:3px;text-align:center;">created by <span style="color:#555">@wanqerson</span></p>
+</div>
+
+<div id="loading">
+  <div class="load-text">CARREGANDO...</div>
+  <div class="load-bar-outer"><div class="load-bar-inner" id="load-bar"></div></div>
+  <div class="load-status" id="load-status">Aguarde...</div>
+</div>
+
+<div id="fight-screen">
+  <canvas id="game-canvas" width="960" height="540"
+    ondragover="event.preventDefault()"
+    ondrop="event.preventDefault();loadStage(event.dataTransfer.files[0])"></canvas>
+  <button id="export-btn" onclick="exportMatchSheet()"
+    style="position:fixed;right:12px;bottom:12px;z-index:50;background:#111;color:#ffd700;border:1px solid #333;
+    font-family:'Press Start 2P',monospace;font-size:8px;padding:8px 12px;cursor:pointer">📊 PLANILHA (X)</button>
+</div>
+
+<div id="log-panel"><div class="ttl">LOG</div><div class="hint">G liga/desliga</div><div id="log-body"></div></div>
+
+
+<script src="js/core.js"></script>
+<script src="js/fighter.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/game.js"></script>
+<script src="js/autoboot.js"></script>
+
+</body>
+</html>
