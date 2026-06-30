@@ -1,4 +1,4 @@
-# KOF · MUGEN AI — v10
+# KOF · MUGEN AI
 
 Engine de luta client-side que carrega personagens MUGEN (.zip com SFF/AIR/SND/CMD) e coloca duas IAs com aprendizado e predição para lutar entre si.
 
